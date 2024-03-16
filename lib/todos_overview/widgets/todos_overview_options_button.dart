@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+// import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_todos/l10n/l10n.dart';
+import 'package:flutter_todos/todos_overview/notifier/todos_overview_notifier.dart';
 import 'package:flutter_todos/todos_overview/todos_overview.dart';
 
 @visibleForTesting
 enum TodosOverviewOption { toggleAll, clearCompleted }
 
-class TodosOverviewOptionsButton extends StatelessWidget {
+class TodosOverviewOptionsButton extends ConsumerWidget {
   const TodosOverviewOptionsButton({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
 
-    final todos = context.select((TodosOverviewBloc bloc) => bloc.state.todos);
+    // final todos = context.select((TodosOverviewBloc bloc) => bloc.state.todos);
+    final todos = ref.watch(todosOverviewNotifierProvider).todos;
     final hasTodos = todos.isNotEmpty;
     final completedTodosAmount = todos.where((todo) => todo.isCompleted).length;
 
@@ -25,13 +28,11 @@ class TodosOverviewOptionsButton extends StatelessWidget {
       onSelected: (options) {
         switch (options) {
           case TodosOverviewOption.toggleAll:
-            context
-                .read<TodosOverviewBloc>()
-                .add(const TodosOverviewToggleAllRequested());
+            // context.read<TodosOverviewBloc>().add(const TodosOverviewToggleAllRequested());
+            ref.read(todosOverviewNotifierProvider.notifier).toggleAll();
           case TodosOverviewOption.clearCompleted:
-            context
-                .read<TodosOverviewBloc>()
-                .add(const TodosOverviewClearCompletedRequested());
+            // context.read<TodosOverviewBloc>().add(const TodosOverviewClearCompletedRequested());
+            ref.read(todosOverviewNotifierProvider.notifier).clearCompleted();
         }
       },
       itemBuilder: (context) {
