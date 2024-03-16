@@ -1,4 +1,5 @@
-part of 'stats_bloc.dart';
+// part of 'stats_bloc.dart';
+part of 'stats_notifier.dart';
 
 enum StatsStatus { initial, loading, success, failure }
 
