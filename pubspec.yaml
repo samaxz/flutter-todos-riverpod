@@ -1,0 +1,40 @@
+name: flutter_todos
+description: An example todos app that showcases bloc state management patterns.
+version: 1.0.0+1
+publish_to: none
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+#  bloc: ^8.1.1
+  equatable: ^2.0.5
+  flutter:
+    sdk: flutter
+#  flutter_bloc: ^8.1.1
+  flutter_localizations:
+    sdk: flutter
+  flutter_riverpod: ^2.5.1
+  intl: ^0.18.0
+  local_storage_todos_api:
+    path: packages/local_storage_todos_api
+  riverpod_annotation: ^2.3.5
+  todos_api:
+    path: packages/todos_api
+  todos_repository:
+    path: packages/todos_repository
+
+dev_dependencies:
+  bloc_test: ^9.1.0
+  build_runner: ^2.4.8
+  custom_lint: ^0.6.2
+  flutter_test:
+    sdk: flutter
+  mockingjay: ^0.5.0
+  mocktail: ^1.0.0
+  riverpod_generator: ^2.4.0
+  riverpod_lint: ^2.3.10
+
+flutter:
+  uses-material-design: true
+  generate: true
