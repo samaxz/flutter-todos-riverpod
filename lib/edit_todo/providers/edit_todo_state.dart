@@ -1,4 +1,4 @@
-part of 'edit_todo_bloc.dart';
+part of 'edit_todo_provider.dart';
 
 enum EditTodoStatus { initial, loading, success, failure }
 
