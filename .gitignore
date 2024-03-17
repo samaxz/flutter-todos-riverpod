@@ -16,6 +16,8 @@
 *.iws
 .idea/*
 
+*.g.dart
+
 # Visual Studio Code related
 .classpath
 .project
