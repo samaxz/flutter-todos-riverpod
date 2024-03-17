@@ -16,7 +16,6 @@ class HomePage extends ConsumerWidget {
     //   create: (_) => HomeCubit(),
     //   child: const HomeView(),
     // );
-
     return const HomeView();
   }
 }
