@@ -17,23 +17,14 @@ void bootstrap({required TodosApi todosApi}) {
     );
   };
 
-  // Bloc.observer = const AppBlocObserver();
-
   final todosRepository = TodosRepository(todosApi: todosApi);
 
-  runZonedGuarded(
-    () => runApp(
-      ProviderScope(
-        overrides: [
-          todosRepositoryProvider.overrideWithValue(todosRepository),
-        ],
-        // child: App(todosRepository: todosRepository),
-        child: const App(),
-      ),
-    ),
-    (error, stackTrace) => log(
-      error.toString(),
-      stackTrace: stackTrace,
+  runApp(
+    ProviderScope(
+      overrides: [
+        todosRepositoryProvider.overrideWithValue(todosRepository),
+      ],
+      child: const App(),
     ),
   );
 }
