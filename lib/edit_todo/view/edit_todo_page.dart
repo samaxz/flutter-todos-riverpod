@@ -4,8 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_todos/edit_todo/edit_todo.dart';
 import 'package:flutter_todos/edit_todo/notifier/edit_todo_notifier.dart';
 import 'package:flutter_todos/l10n/l10n.dart';
 import 'package:todos_repository/todos_repository.dart';
@@ -43,16 +41,11 @@ class EditTodoPage extends ConsumerWidget {
     ref.listen(editTodoNotifierProvider(initialTodo), (previous, next) {
       if (previous?.status != next.status && next.status == EditTodoStatus.success) {
         Navigator.of(context).pop();
-        // log('did this get called?');
       }
     });
     return EditTodoView(initialTodo: initialTodo);
   }
 }
-
-// these cause issues with the text disappearing
-// String title = 'awefasdfasdfasdf';
-// String description = 'asdfasdfasdfasdfasdf';
 
 class EditTodoView extends ConsumerStatefulWidget {
   const EditTodoView({
@@ -67,31 +60,14 @@ class EditTodoView extends ConsumerStatefulWidget {
 }
 
 class _EditTodoViewState extends ConsumerState<EditTodoView> {
-  // this is the default value from state's initial value, if it's not empty
-  // String title = ;
-  // String description = '';
-
-  // String determineTitle() {
-  //   String title = '';
-  //   if (widget.initialTodo != null) {
-  //     title = widget.initialTodo!.title;
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    // i think each of these should be takin in a specific todo
     final todoState = ref.watch(editTodoNotifierProvider(widget.initialTodo));
     final status = todoState.status;
     final isNewTodo = todoState.isNewTodo;
-    // final initialTodo = todoState.initialTodo;
-    // String title = todoState.title;
-    String title = todoState.initialTodo?.title ?? todoState.title;
-    // String description = todoState.description;
-    String description = todoState.initialTodo?.description ?? todoState.description;
-
-    // log('is new todo: $isNewTodo');
+    final title = todoState.initialTodo?.title ?? todoState.title;
+    final description = todoState.initialTodo?.description ?? todoState.description;
 
     return Scaffold(
       appBar: AppBar(
@@ -107,16 +83,7 @@ class _EditTodoViewState extends ConsumerState<EditTodoView> {
         onPressed: status.isLoadingOrSuccess
             ? null
             : () async {
-                final todo = Todo(
-                  // this is wrong - it depends on empty state - and the empty state
-                  // depends on these values of empty state - in other words, it's
-                  // state's own empty values
-                  // title: todoState.title,
-                  // description: todoState.description,
-                  // i need to get value from the text fields
-                  title: title,
-                  description: description,
-                );
+                final todo = Todo(title: title, description: description);
                 await ref
                     .read(editTodoNotifierProvider(widget.initialTodo).notifier)
                     .submitTodo(todo);
@@ -131,17 +98,8 @@ class _EditTodoViewState extends ConsumerState<EditTodoView> {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                _TitleField(
-                  textFieldValue: (value) {},
-                  textControllerValue: (value) {
-                    // title = value;
-                  },
-                  initialTodo: widget.initialTodo,
-                ),
-                _DescriptionField(
-                  textFieldValue: (value) {},
-                  initialTodo: widget.initialTodo,
-                ),
+                _TitleField(initialTodo: widget.initialTodo),
+                _DescriptionField(initialTodo: widget.initialTodo),
               ],
             ),
           ),
@@ -151,47 +109,18 @@ class _EditTodoViewState extends ConsumerState<EditTodoView> {
   }
 }
 
-class _TitleField extends ConsumerStatefulWidget {
-  const _TitleField({
-    required this.textFieldValue,
-    required this.textControllerValue,
-    this.initialTodo,
-  });
+class _TitleField extends ConsumerWidget {
+  const _TitleField({this.initialTodo});
 
-  final ValueChanged<String> textFieldValue;
-  final ValueChanged<String> textControllerValue;
   final Todo? initialTodo;
 
   @override
-  ConsumerState createState() => _TitleFieldState();
-}
-
-class _TitleFieldState extends ConsumerState<_TitleField> {
-  // late final TextEditingController controller;
-  //
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   final state = ref.read(editTodoNotifierProvider(widget.initialTodo));
-  //   controller = TextEditingController(text: state.initialTodo?.title)
-  //     // controller = TextEditingController()
-  //     ..addListener(() {
-  //       widget.textControllerValue(controller.text);
-  //     });
-  // }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    // final state = context.watch<EditTodoBloc>().state;
-    final state = ref.watch(editTodoNotifierProvider(widget.initialTodo));
-    // final hintText = state.initialTodo?.title ?? '';
+    final state = ref.watch(editTodoNotifierProvider(initialTodo));
     final hintText = state.initialTodo?.title;
-    // log('hint text for title: $hintText');
-    // log('initial value: ${state.title}');
 
     return TextFormField(
-      // controller: controller,
       initialValue: hintText,
       key: const Key('editTodoView_title_textFormField'),
       decoration: InputDecoration(
@@ -206,31 +135,23 @@ class _TitleFieldState extends ConsumerState<_TitleField> {
       ],
       onChanged: (value) {
         // context.read<EditTodoBloc>().add(EditTodoTitleChanged(value));
-        ref.read(editTodoNotifierProvider(widget.initialTodo).notifier).changeTitle(value);
-        widget.textFieldValue(value);
+        ref.read(editTodoNotifierProvider(initialTodo).notifier).changeTitle(value);
       },
     );
   }
 }
 
 class _DescriptionField extends ConsumerWidget {
-  const _DescriptionField({
-    required this.textFieldValue,
-    this.initialTodo,
-  });
+  const _DescriptionField({this.initialTodo});
 
-  final ValueChanged<String> textFieldValue;
   final Todo? initialTodo;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
 
-    // final state = context.watch<EditTodoBloc>().state;
     final state = ref.watch(editTodoNotifierProvider(initialTodo));
-    // final hintText = state.initialTodo?.description ?? '';
     final hintText = state.initialTodo?.description;
-    // log('hint text for description: $hintText');
 
     return TextFormField(
       key: const Key('editTodoView_description_textFormField'),
@@ -248,7 +169,6 @@ class _DescriptionField extends ConsumerWidget {
       onChanged: (value) {
         // context.read<EditTodoBloc>().add(EditTodoDescriptionChanged(value));
         ref.read(editTodoNotifierProvider(initialTodo).notifier).changeDescription(value);
-        textFieldValue(value);
       },
     );
   }
