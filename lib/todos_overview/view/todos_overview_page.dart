@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -86,7 +88,6 @@ class TodosOverviewView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    // final todosOverview = ref.watch(todosOverviewNotifierProvider);
 
     ref.listen(todosOverviewNotifierProvider, (previous, next) {
       if (previous != null &&

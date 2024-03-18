@@ -5,16 +5,7 @@
 //
 // // part 'edit_todo_event.dart';
 // part 'edit_todo_state.dart';
-// part 'edit_todo_bloc.g.dart';
 //
-// @riverpod
-// class EditTodoProvider extends _$EditTodoProvider {
-//   @override
-//   EditTodoState build() {
-//     return const EditTodoState();
-//   }
-// }
-
 // class EditTodoBloc extends Bloc<EditTodoEvent, EditTodoState> {
 //   EditTodoBloc({
 //     required TodosRepository todosRepository,
