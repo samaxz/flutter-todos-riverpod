@@ -1,5 +1,5 @@
 name: flutter_todos
-description: An example todos app that showcases bloc state management patterns.
+description: An example todos app that showcases riverpod state management patterns.
 version: 1.0.0+1
 publish_to: none
 
@@ -7,10 +7,10 @@ environment:
   sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
-#  bloc: ^8.1.1
   equatable: ^2.0.5
   flutter:
     sdk: flutter
+  flutter_gen_runner: ^5.4.0
   flutter_localizations:
     sdk: flutter
   flutter_riverpod: ^2.5.1
@@ -24,7 +24,6 @@ dependencies:
     path: packages/todos_repository
 
 dev_dependencies:
-#  bloc_test: ^9.1.0
   build_runner: ^2.4.8
   custom_lint: ^0.6.2
   flutter_test:
