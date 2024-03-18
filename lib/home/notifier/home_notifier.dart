@@ -1,7 +1,8 @@
-import 'package:flutter_todos/home/cubit/home_cubit.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:equatable/equatable.dart';
 
 part 'home_notifier.g.dart';
+part 'home_state.dart';
 
 @riverpod
 class HomeNotifier extends _$HomeNotifier {

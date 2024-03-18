@@ -1,4 +1,4 @@
-part of 'home_cubit.dart';
+part of 'home_notifier.dart';
 
 enum HomeTab { todos, stats }
 
