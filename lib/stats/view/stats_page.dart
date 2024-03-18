@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_todos/l10n/l10n.dart';
 import 'package:flutter_todos/stats/notifier/stats_notifier.dart';
-import 'package:flutter_todos/stats/stats.dart';
-import 'package:todos_repository/todos_repository.dart';
 
 class StatsPage extends ConsumerStatefulWidget {
   const StatsPage({super.key});
@@ -24,12 +21,6 @@ class _StatsPageState extends ConsumerState<StatsPage> {
 
   @override
   Widget build(BuildContext context) {
-    // return BlocProvider(
-    //   create: (context) => StatsBloc(
-    //     todosRepository: context.read<TodosRepository>(),
-    //   )..add(const StatsSubscriptionRequested()),
-    //   child: const StatsView(),
-    // );
     return const StatsView();
   }
 }
@@ -40,7 +31,6 @@ class StatsView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    // final state = context.watch<StatsBloc>().state;
     final state = ref.watch(statsNotifierProvider);
     final textTheme = Theme.of(context).textTheme;
 

@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_todos/providers/providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:todos_repository/todos_repository.dart';
 
 part 'stats_notifier.g.dart';
 part 'stats_state.dart';

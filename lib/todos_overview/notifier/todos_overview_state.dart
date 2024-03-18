@@ -1,4 +1,3 @@
-// part of 'todos_overview_bloc.dart';
 part of 'todos_overview_notifier.dart';
 
 enum TodosOverviewStatus { initial, loading, success, failure }

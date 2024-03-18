@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -19,25 +17,12 @@ class EditTodoPage extends ConsumerWidget {
   static Route<void> route({Todo? initialTodo}) {
     return MaterialPageRoute(
       fullscreenDialog: true,
-      // builder: (context) => BlocProvider(
-      //   create: (context) => EditTodoBloc(
-      //     todosRepository: context.read<TodosRepository>(),
-      //     initialTodo: initialTodo,
-      //   ),
-      //   child: const EditTodoPage(),
-      // ),
       builder: (context) => EditTodoPage(initialTodo: initialTodo),
     );
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // return BlocListener<EditTodoBloc, EditTodoState>(
-    //   listenWhen: (previous, current) =>
-    //       previous.status != current.status && current.status == EditTodoStatus.success,
-    //   listener: (context, state) => Navigator.of(context).pop(),
-    //   child: const EditTodoView(),
-    // );
     ref.listen(editTodoNotifierProvider(initialTodo), (previous, next) {
       if (previous?.status != next.status && next.status == EditTodoStatus.success) {
         Navigator.of(context).pop();
@@ -129,7 +114,6 @@ class _TitleField extends ConsumerWidget {
         FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9\s]')),
       ],
       onChanged: (value) {
-        // context.read<EditTodoBloc>().add(EditTodoTitleChanged(value));
         ref.read(editTodoNotifierProvider(initialTodo).notifier).changeTitle(value);
       },
     );
@@ -161,7 +145,6 @@ class _DescriptionField extends ConsumerWidget {
         LengthLimitingTextInputFormatter(300),
       ],
       onChanged: (value) {
-        // context.read<EditTodoBloc>().add(EditTodoDescriptionChanged(value));
         ref.read(editTodoNotifierProvider(initialTodo).notifier).changeDescription(value);
       },
     );
