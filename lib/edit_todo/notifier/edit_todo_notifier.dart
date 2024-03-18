@@ -43,12 +43,7 @@ class EditTodoNotifier extends _$EditTodoNotifier {
     // log('new description: ${newTodo.description}');
     try {
       await ref.read(todosRepositoryProvider).saveTodo(todo);
-      state = state.copyWith(
-        status: EditTodoStatus.success,
-        title: todo.title,
-        description: todo.description,
-        initialTodo: todo,
-      );
+      state = state.copyWith(status: EditTodoStatus.success);
     } catch (e) {
       state = state.copyWith(status: EditTodoStatus.failure);
     }
