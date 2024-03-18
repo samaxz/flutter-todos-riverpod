@@ -66,8 +66,6 @@ class _EditTodoViewState extends ConsumerState<EditTodoView> {
     final todoState = ref.watch(editTodoNotifierProvider(widget.initialTodo));
     final status = todoState.status;
     final isNewTodo = todoState.isNewTodo;
-    final title = todoState.initialTodo?.title ?? todoState.title;
-    final description = todoState.initialTodo?.description ?? todoState.description;
 
     return Scaffold(
       appBar: AppBar(
@@ -82,11 +80,8 @@ class _EditTodoViewState extends ConsumerState<EditTodoView> {
         ),
         onPressed: status.isLoadingOrSuccess
             ? null
-            : () async {
-                final todo = Todo(title: title, description: description);
-                await ref
-                    .read(editTodoNotifierProvider(widget.initialTodo).notifier)
-                    .submitTodo(todo);
+            : () {
+                ref.read(editTodoNotifierProvider(widget.initialTodo).notifier).submitTodo();
               },
         child: status.isLoadingOrSuccess
             ? const CupertinoActivityIndicator()
@@ -149,7 +144,6 @@ class _DescriptionField extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-
     final state = ref.watch(editTodoNotifierProvider(initialTodo));
     final hintText = state.initialTodo?.description;
 

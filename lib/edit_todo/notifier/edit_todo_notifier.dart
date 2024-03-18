@@ -32,12 +32,12 @@ class EditTodoNotifier extends _$EditTodoNotifier {
     // log('changeDescription()');
   }
 
-  Future<void> submitTodo(Todo newTodo) async {
+  Future<void> submitTodo() async {
     state = state.copyWith(status: EditTodoStatus.loading);
     final todo = (state.initialTodo ?? Todo(title: '')).copyWith(
       // todo's values will be set to these - so, i need to modify them
-      title: newTodo.title,
-      description: newTodo.description,
+      title: state.initialTodo?.title ?? state.title,
+      description: state.initialTodo?.description ?? state.description,
     );
     // log('new title: ${newTodo.title}');
     // log('new description: ${newTodo.description}');
