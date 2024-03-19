@@ -22,18 +22,10 @@ class _TodosOverviewPageState extends ConsumerState<TodosOverviewPage> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return const TodosOverviewView();
-  }
-}
-
-class TodosOverviewView extends ConsumerWidget {
-  const TodosOverviewView({super.key});
-
   Widget buildBody(WidgetRef ref, BuildContext context) {
     final l10n = context.l10n;
     final todosOverview = ref.watch(todosOverviewNotifierProvider);
+
     if (todosOverview.todos.isEmpty) {
       if (todosOverview.status == TodosOverviewStatus.loading) {
         return const Center(child: CupertinoActivityIndicator());
@@ -48,6 +40,7 @@ class TodosOverviewView extends ConsumerWidget {
         );
       }
     }
+
     return CupertinoScrollbar(
       child: ListView(
         children: [
@@ -76,7 +69,7 @@ class TodosOverviewView extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final l10n = context.l10n;
 
     ref.listen(todosOverviewNotifierProvider, (previous, next) {
@@ -91,7 +84,6 @@ class TodosOverviewView extends ConsumerWidget {
             ),
           );
       }
-      // not sure if this is the right solution
       if (previous != null &&
           previous.lastDeletedTodo != next.lastDeletedTodo &&
           next.lastDeletedTodo != null) {

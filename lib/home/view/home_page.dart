@@ -10,15 +10,6 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return const HomeView();
-  }
-}
-
-class HomeView extends ConsumerWidget {
-  const HomeView({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
     final selectedTab = ref.watch(homeNotifierProvider).tab;
 
     return Scaffold(

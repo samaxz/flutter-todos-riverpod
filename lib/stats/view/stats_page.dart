@@ -21,15 +21,6 @@ class _StatsPageState extends ConsumerState<StatsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return const StatsView();
-  }
-}
-
-class StatsView extends ConsumerWidget {
-  const StatsView({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final state = ref.watch(statsNotifierProvider);
     final textTheme = Theme.of(context).textTheme;

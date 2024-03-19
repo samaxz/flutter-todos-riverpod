@@ -28,27 +28,9 @@ class EditTodoPage extends ConsumerWidget {
         Navigator.of(context).pop();
       }
     });
-    return EditTodoView(initialTodo: initialTodo);
-  }
-}
 
-class EditTodoView extends ConsumerStatefulWidget {
-  const EditTodoView({
-    super.key,
-    this.initialTodo,
-  });
-
-  final Todo? initialTodo;
-
-  @override
-  ConsumerState createState() => _EditTodoViewState();
-}
-
-class _EditTodoViewState extends ConsumerState<EditTodoView> {
-  @override
-  Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final todoState = ref.watch(editTodoNotifierProvider(widget.initialTodo));
+    final todoState = ref.watch(editTodoNotifierProvider(initialTodo));
     final status = todoState.status;
     final isNewTodo = todoState.isNewTodo;
 
@@ -66,7 +48,7 @@ class _EditTodoViewState extends ConsumerState<EditTodoView> {
         onPressed: status.isLoadingOrSuccess
             ? null
             : () {
-                ref.read(editTodoNotifierProvider(widget.initialTodo).notifier).submitTodo();
+                ref.read(editTodoNotifierProvider(initialTodo).notifier).submitTodo();
               },
         child: status.isLoadingOrSuccess
             ? const CupertinoActivityIndicator()
@@ -78,8 +60,8 @@ class _EditTodoViewState extends ConsumerState<EditTodoView> {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                _TitleField(initialTodo: widget.initialTodo),
-                _DescriptionField(initialTodo: widget.initialTodo),
+                _TitleField(initialTodo: initialTodo),
+                _DescriptionField(initialTodo: initialTodo),
               ],
             ),
           ),
