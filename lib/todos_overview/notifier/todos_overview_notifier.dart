@@ -3,11 +3,26 @@ import 'package:flutter_todos/providers/providers.dart';
 import 'package:flutter_todos/todos_overview/models/todos_view_filter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:todos_repository/todos_repository.dart';
+import 'package:mocktail/mocktail.dart';
 
 part 'todos_overview_notifier.g.dart';
 part 'todos_overview_state.dart';
 
-@riverpod
+class MockTodosOverviewNotifier extends _$TodosOverviewNotifier
+    with Mock
+    implements TodosOverviewNotifier {
+  @override
+  TodosOverviewState build() {
+    return const TodosOverviewState();
+  }
+
+  @override
+  Future<void> requestSubscription() {
+    return Future.value();
+  }
+}
+
+@Riverpod(dependencies: [todosRepository])
 class TodosOverviewNotifier extends _$TodosOverviewNotifier {
   @override
   TodosOverviewState build() {
@@ -24,7 +39,9 @@ class TodosOverviewNotifier extends _$TodosOverviewNotifier {
           todos: () => todos,
         );
       },
-      onError: (_, __) => state = state.copyWith(status: () => TodosOverviewStatus.failure),
+      onError: (_, __) {
+        state = state.copyWith(status: () => TodosOverviewStatus.failure);
+      },
     );
   }
 
