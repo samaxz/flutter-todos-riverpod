@@ -9,9 +9,6 @@ import 'package:todos_repository/todos_repository.dart';
 
 import '../../helpers/helpers.dart';
 
-// class MockEditTodoBloc extends MockBloc<EditTodoEvent, EditTodoState>
-//     implements EditTodoBloc {}
-
 class Listener<T> extends Mock {
   void call(T? previous, T next);
 }
@@ -28,50 +25,22 @@ void main() {
       overrides: [
         todosRepositoryProvider.overrideWithValue(MockTodosRepository()),
         editTodoNotifierProvider().overrideWith(() => MockEditTodoNotifier()),
-        // editTodoNotifierProvider().overrideWith(() => MockEditTodoNotifierBuild()),
       ],
     );
-    // this throws, since it can only be used inside tests
-    // addTearDown(container.dispose);
     return container;
   }
 
   late MockNavigator navigator;
-  // late EditTodoBloc editTodoBloc;
 
   setUp(() {
     navigator = MockNavigator();
     when(() => navigator.canPop()).thenReturn(false);
     when(() => navigator.push<void>(any())).thenAnswer((_) async {});
 
-    // editTodoBloc = MockEditTodoBloc();
-    // when(() => editTodoBloc.state).thenReturn(
     when(() {
       final container = createProviderContainer();
-      // container.updateOverrides([
-      //   todosRepositoryProvider.overrideWithValue(MockTodosRepository()),
-      //   // editTodoNotifierProvider().overrideWith(() => EditTodoNotifier()),
-      //   editTodoNotifierProvider().overrideWith(() => MockEditTodoNotifier()),
-      // ]);
-      // final a = container.read(editTodoNotifierProvider(initialTodo: mockTodo));
-      // return a;
-      // return container.read(editTodoNotifierProvider(initialTodo: mockTodo));
-      // this works
       return container.read(editTodoNotifierProvider().notifier).setTodo(mockTodo);
-      // this doesn't work :(
-      // return container
-      //     .read(editTodoNotifierProvider().notifier)
-      //     .build(initialTodo: mockTodo);
-      // return createProviderContainer()
-      // .read(editTodoNotifierProvider(initialTodo: mockTodo).notifier)
-      // .changeDescription(mockTodo.description);
-      // return notifier.changeTitle(mockTodo.title);
-      // return notifier.changeDescription(mockTodo.description);
-      // return notifier;
-      // return createProviderContainer()
-      //     .read(editTodoNotifierProvider(initialTodo: mockTodo));
     }).thenReturn(
-      // i can tell this is gonna throw
       EditTodoState(
         initialTodo: mockTodo,
         title: mockTodo.title,
@@ -127,22 +96,15 @@ void main() {
         //   ]),
         // );
         final container = createProviderContainer();
-        // container.updateOverrides([
-        //   todosRepositoryProvider.overrideWithValue(MockTodosRepository()),
-        //   // editTodoNotifierProvider().overrideWith(() => MockEditTodoNotifierNew()),
-        //   editTodoNotifierProvider().overrideWith(() => MockEditTodoNotifier()),
-        // ]);
         final listener = Listener<EditTodoState>();
         container.listen(
           editTodoNotifierProvider(),
           listener,
           fireImmediately: true,
         );
-        // i just know this is wrong
         listener(
           null,
           EditTodoState(),
-          // EditTodoState(status: EditTodoStatus.success),
         );
         await tester.pumpApp(buildSubject());
 
@@ -169,7 +131,6 @@ void main() {
         final container = createProviderContainer();
         // when(() => editTodoBloc.state).thenReturn(const EditTodoState());
         when(() {
-          // return container.read(editTodoNotifierProvider());
           return container
               .read(editTodoNotifierProvider().notifier)
               .setTodo(Todo(title: ''));
@@ -194,7 +155,6 @@ void main() {
         final container = createProviderContainer();
         // when(() => editTodoBloc.state).thenReturn(
         when(() {
-          // return container.read(editTodoNotifierProvider());
           return container
               .read(editTodoNotifierProvider().notifier)
               .setTodo(Todo(title: 'title'));
@@ -227,7 +187,6 @@ void main() {
         final container = createProviderContainer();
         // when(() => editTodoBloc.state).thenReturn(
         when(() {
-          // return container.read(editTodoNotifierProvider());
           return container
               .read(editTodoNotifierProvider().notifier)
               .setTodo(Todo(title: ''));
