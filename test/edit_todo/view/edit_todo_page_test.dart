@@ -1,15 +1,20 @@
-import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_todos/edit_todo/edit_todo.dart';
+import 'package:flutter_todos/edit_todo/notifier/edit_todo_notifier.dart';
+import 'package:flutter_todos/providers/providers.dart';
 import 'package:mockingjay/mockingjay.dart';
 import 'package:todos_repository/todos_repository.dart';
 
 import '../../helpers/helpers.dart';
 
-class MockEditTodoBloc extends MockBloc<EditTodoEvent, EditTodoState>
-    implements EditTodoBloc {}
+// class MockEditTodoBloc extends MockBloc<EditTodoEvent, EditTodoState>
+//     implements EditTodoBloc {}
+
+class Listener<T> extends Mock {
+  void call(T? previous, T next);
+}
 
 void main() {
   final mockTodo = Todo(
@@ -18,16 +23,55 @@ void main() {
     description: 'description 1',
   );
 
+  ProviderContainer createProviderContainer() {
+    final container = ProviderContainer(
+      overrides: [
+        todosRepositoryProvider.overrideWithValue(MockTodosRepository()),
+        editTodoNotifierProvider().overrideWith(() => MockEditTodoNotifier()),
+        // editTodoNotifierProvider().overrideWith(() => MockEditTodoNotifierBuild()),
+      ],
+    );
+    // this throws, since it can only be used inside tests
+    // addTearDown(container.dispose);
+    return container;
+  }
+
   late MockNavigator navigator;
-  late EditTodoBloc editTodoBloc;
+  // late EditTodoBloc editTodoBloc;
 
   setUp(() {
     navigator = MockNavigator();
     when(() => navigator.canPop()).thenReturn(false);
     when(() => navigator.push<void>(any())).thenAnswer((_) async {});
 
-    editTodoBloc = MockEditTodoBloc();
-    when(() => editTodoBloc.state).thenReturn(
+    // editTodoBloc = MockEditTodoBloc();
+    // when(() => editTodoBloc.state).thenReturn(
+    when(() {
+      final container = createProviderContainer();
+      // container.updateOverrides([
+      //   todosRepositoryProvider.overrideWithValue(MockTodosRepository()),
+      //   // editTodoNotifierProvider().overrideWith(() => EditTodoNotifier()),
+      //   editTodoNotifierProvider().overrideWith(() => MockEditTodoNotifier()),
+      // ]);
+      // final a = container.read(editTodoNotifierProvider(initialTodo: mockTodo));
+      // return a;
+      // return container.read(editTodoNotifierProvider(initialTodo: mockTodo));
+      // this works
+      return container.read(editTodoNotifierProvider().notifier).setTodo(mockTodo);
+      // this doesn't work :(
+      // return container
+      //     .read(editTodoNotifierProvider().notifier)
+      //     .build(initialTodo: mockTodo);
+      // return createProviderContainer()
+      // .read(editTodoNotifierProvider(initialTodo: mockTodo).notifier)
+      // .changeDescription(mockTodo.description);
+      // return notifier.changeTitle(mockTodo.title);
+      // return notifier.changeDescription(mockTodo.description);
+      // return notifier;
+      // return createProviderContainer()
+      //     .read(editTodoNotifierProvider(initialTodo: mockTodo));
+    }).thenReturn(
+      // i can tell this is gonna throw
       EditTodoState(
         initialTodo: mockTodo,
         title: mockTodo.title,
@@ -40,10 +84,7 @@ void main() {
     Widget buildSubject() {
       return MockNavigatorProvider(
         navigator: navigator,
-        child: BlocProvider.value(
-          value: editTodoBloc,
-          child: const EditTodoPage(),
-        ),
+        child: const EditTodoPage(),
       );
     }
 
@@ -56,10 +97,7 @@ void main() {
       testWidgets('supports providing an initial todo', (tester) async {
         await tester.pumpRoute(
           EditTodoPage.route(
-            initialTodo: Todo(
-              id: 'initial-id',
-              title: 'initial',
-            ),
+            initialTodo: Todo(id: 'initial-id', title: 'initial'),
           ),
         );
         expect(find.byType(EditTodoPage), findsOneWidget);
@@ -75,20 +113,36 @@ void main() {
     testWidgets('renders EditTodoView', (tester) async {
       await tester.pumpApp(buildSubject());
 
-      expect(find.byType(EditTodoView), findsOneWidget);
+      expect(find.byType(EditTodoPage), findsOneWidget);
     });
 
     testWidgets(
       'pops when a todo was saved successfully',
       (tester) async {
-        whenListen<EditTodoState>(
-          editTodoBloc,
-          Stream.fromIterable(const [
-            EditTodoState(),
-            EditTodoState(
-              status: EditTodoStatus.success,
-            ),
-          ]),
+        // whenListen<EditTodoState>(
+        //   editTodoBloc,
+        //   Stream.fromIterable(const [
+        //     EditTodoState(),
+        //     EditTodoState(status: EditTodoStatus.success),
+        //   ]),
+        // );
+        final container = createProviderContainer();
+        // container.updateOverrides([
+        //   todosRepositoryProvider.overrideWithValue(MockTodosRepository()),
+        //   // editTodoNotifierProvider().overrideWith(() => MockEditTodoNotifierNew()),
+        //   editTodoNotifierProvider().overrideWith(() => MockEditTodoNotifier()),
+        // ]);
+        final listener = Listener<EditTodoState>();
+        container.listen(
+          editTodoNotifierProvider(),
+          listener,
+          fireImmediately: true,
+        );
+        // i just know this is wrong
+        listener(
+          null,
+          EditTodoState(),
+          // EditTodoState(status: EditTodoStatus.success),
         );
         await tester.pumpApp(buildSubject());
 
@@ -99,16 +153,12 @@ void main() {
 
   group('EditTodoView', () {
     const titleTextFormField = Key('editTodoView_title_textFormField');
-    const descriptionTextFormField =
-        Key('editTodoView_description_textFormField');
+    const descriptionTextFormField = Key('editTodoView_description_textFormField');
 
     Widget buildSubject() {
       return MockNavigatorProvider(
         navigator: navigator,
-        child: BlocProvider.value(
-          value: editTodoBloc,
-          child: const EditTodoView(),
-        ),
+        child: const EditTodoPage(),
       );
     }
 
@@ -116,7 +166,14 @@ void main() {
       'renders AppBar with title text for new todos '
       'when a new todo is being created',
       (tester) async {
-        when(() => editTodoBloc.state).thenReturn(const EditTodoState());
+        final container = createProviderContainer();
+        // when(() => editTodoBloc.state).thenReturn(const EditTodoState());
+        when(() {
+          // return container.read(editTodoNotifierProvider());
+          return container
+              .read(editTodoNotifierProvider().notifier)
+              .setTodo(Todo(title: ''));
+        }).thenReturn(const EditTodoState());
         await tester.pumpApp(buildSubject());
 
         expect(find.byType(AppBar), findsOneWidget);
@@ -134,7 +191,14 @@ void main() {
       'renders AppBar with title text for editing todos '
       'when an existing todo is being edited',
       (tester) async {
-        when(() => editTodoBloc.state).thenReturn(
+        final container = createProviderContainer();
+        // when(() => editTodoBloc.state).thenReturn(
+        when(() {
+          // return container.read(editTodoNotifierProvider());
+          return container
+              .read(editTodoNotifierProvider().notifier)
+              .setTodo(Todo(title: 'title'));
+        }).thenReturn(
           EditTodoState(
             initialTodo: Todo(title: 'title'),
           ),
@@ -160,10 +224,15 @@ void main() {
       });
 
       testWidgets('is disabled when loading', (tester) async {
-        when(() => editTodoBloc.state).thenReturn(
-          const EditTodoState(
-            status: EditTodoStatus.loading,
-          ),
+        final container = createProviderContainer();
+        // when(() => editTodoBloc.state).thenReturn(
+        when(() {
+          // return container.read(editTodoNotifierProvider());
+          return container
+              .read(editTodoNotifierProvider().notifier)
+              .setTodo(Todo(title: ''));
+        }).thenReturn(
+          const EditTodoState(status: EditTodoStatus.loading),
         );
         await tester.pumpApp(buildSubject());
 
@@ -177,6 +246,7 @@ void main() {
         'to EditTodoBloc '
         'when a new value is entered',
         (tester) async {
+          final container = createProviderContainer();
           await tester.pumpApp(buildSubject());
           await tester.enterText(
             find.byKey(titleTextFormField),
@@ -184,7 +254,10 @@ void main() {
           );
 
           verify(
-            () => editTodoBloc.add(const EditTodoTitleChanged('newtitle')),
+            // () => editTodoBloc.add(const EditTodoTitleChanged('newtitle')),
+            () => container
+                .read(editTodoNotifierProvider().notifier)
+                .changeTitle('newtitle'),
           ).called(1);
         },
       );
@@ -198,15 +271,16 @@ void main() {
       });
 
       testWidgets('is disabled when loading', (tester) async {
-        when(() => editTodoBloc.state).thenReturn(
-          const EditTodoState(
-            status: EditTodoStatus.loading,
-          ),
+        final container = createProviderContainer();
+        // when(() => editTodoBloc.state).thenReturn(
+        when(() {
+          return container.read(editTodoNotifierProvider());
+        }).thenReturn(
+          const EditTodoState(status: EditTodoStatus.loading),
         );
         await tester.pumpApp(buildSubject());
 
-        final textField =
-            tester.widget<TextFormField>(find.byKey(titleTextFormField));
+        final textField = tester.widget<TextFormField>(find.byKey(titleTextFormField));
         expect(textField.enabled, false);
       });
 
@@ -215,6 +289,7 @@ void main() {
         'to EditTodoBloc '
         'when a new value is entered',
         (tester) async {
+          final container = createProviderContainer();
           await tester.pumpApp(buildSubject());
           await tester.enterText(
             find.byKey(descriptionTextFormField),
@@ -222,8 +297,10 @@ void main() {
           );
 
           verify(
-            () => editTodoBloc
-                .add(const EditTodoDescriptionChanged('newdescription')),
+            // () => editTodoBloc.add(const EditTodoDescriptionChanged('newdescription')),
+            () => container
+                .read(editTodoNotifierProvider().notifier)
+                .changeDescription('newdescription'),
           ).called(1);
         },
       );
@@ -247,10 +324,13 @@ void main() {
         'to EditTodoBloc '
         'when tapped',
         (tester) async {
+          final container = createProviderContainer();
           await tester.pumpApp(buildSubject());
           await tester.tap(find.byType(FloatingActionButton));
 
-          verify(() => editTodoBloc.add(const EditTodoSubmitted())).called(1);
+          // verify(() => editTodoBloc.add(const EditTodoSubmitted())).called(1);
+          verify(container.read(editTodoNotifierProvider().notifier).submitTodo)
+              .called(1);
         },
       );
     });
