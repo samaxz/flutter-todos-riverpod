@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors, avoid_redundant_argument_values
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_todos/edit_todo/edit_todo.dart';
+import 'package:flutter_todos/edit_todo/notifier/edit_todo_notifier.dart';
 import 'package:todos_repository/todos_repository.dart';
 
 void main() {
