@@ -23,14 +23,17 @@ class EditTodoPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen(editTodoNotifierProvider(initialTodo), (previous, next) {
-      if (previous?.status != next.status && next.status == EditTodoStatus.success) {
-        Navigator.of(context).pop();
-      }
-    });
+    ref.listen(
+      editTodoNotifierProvider(initialTodo: initialTodo),
+      (previous, next) {
+        if (previous?.status != next.status && next.status == EditTodoStatus.success) {
+          Navigator.of(context).pop();
+        }
+      },
+    );
 
     final l10n = context.l10n;
-    final todoState = ref.watch(editTodoNotifierProvider(initialTodo));
+    final todoState = ref.watch(editTodoNotifierProvider(initialTodo: initialTodo));
     final status = todoState.status;
     final isNewTodo = todoState.isNewTodo;
 
@@ -48,7 +51,9 @@ class EditTodoPage extends ConsumerWidget {
         onPressed: status.isLoadingOrSuccess
             ? null
             : () {
-                ref.read(editTodoNotifierProvider(initialTodo).notifier).submitTodo();
+                ref
+                    .read(editTodoNotifierProvider(initialTodo: initialTodo).notifier)
+                    .submitTodo();
               },
         child: status.isLoadingOrSuccess
             ? const CupertinoActivityIndicator()
@@ -79,7 +84,7 @@ class _TitleField extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final state = ref.watch(editTodoNotifierProvider(initialTodo));
+    final state = ref.watch(editTodoNotifierProvider(initialTodo: initialTodo));
     final hintText = state.initialTodo?.title;
 
     return TextFormField(
@@ -96,7 +101,9 @@ class _TitleField extends ConsumerWidget {
         FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9\s]')),
       ],
       onChanged: (value) {
-        ref.read(editTodoNotifierProvider(initialTodo).notifier).changeTitle(value);
+        ref
+            .read(editTodoNotifierProvider(initialTodo: initialTodo).notifier)
+            .changeTitle(value);
       },
     );
   }
@@ -110,7 +117,7 @@ class _DescriptionField extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final state = ref.watch(editTodoNotifierProvider(initialTodo));
+    final state = ref.watch(editTodoNotifierProvider(initialTodo: initialTodo));
     final hintText = state.initialTodo?.description;
 
     return TextFormField(
@@ -127,7 +134,9 @@ class _DescriptionField extends ConsumerWidget {
         LengthLimitingTextInputFormatter(300),
       ],
       onChanged: (value) {
-        ref.read(editTodoNotifierProvider(initialTodo).notifier).changeDescription(value);
+        ref
+            .read(editTodoNotifierProvider(initialTodo: initialTodo).notifier)
+            .changeDescription(value);
       },
     );
   }
