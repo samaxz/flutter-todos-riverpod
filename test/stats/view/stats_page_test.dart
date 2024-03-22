@@ -1,6 +1,4 @@
-import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_todos/stats/stats.dart';
 import 'package:mockingjay/mockingjay.dart';
@@ -8,8 +6,7 @@ import 'package:todos_repository/todos_repository.dart';
 
 import '../../helpers/helpers.dart';
 
-class MockStatsBloc extends MockBloc<StatsEvent, StatsState>
-    implements StatsBloc {}
+class MockStatsBloc extends MockBloc<StatsEvent, StatsState> implements StatsBloc {}
 
 void main() {
   group('StatsPage', () {

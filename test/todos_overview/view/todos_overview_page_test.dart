@@ -1,7 +1,5 @@
-import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_todos/todos_overview/todos_overview.dart';
 import 'package:mockingjay/mockingjay.dart';
@@ -11,8 +9,7 @@ import '../../helpers/helpers.dart';
 
 class MockTodosRepository extends Mock implements TodosRepository {}
 
-class MockTodosOverviewBloc
-    extends MockBloc<TodosOverviewEvent, TodosOverviewState>
+class MockTodosOverviewBloc extends MockBloc<TodosOverviewEvent, TodosOverviewState>
     implements TodosOverviewBloc {}
 
 void main() {
