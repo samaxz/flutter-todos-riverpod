@@ -20,7 +20,7 @@ void main() {
         todosRepositoryProvider.overrideWithValue(MockTodosRepository()),
       ],
     );
-    // this throws, as it can only be used inside tests
+    // this throws, since it can only be used inside tests
     // addTearDown(container.dispose);
     return container;
   }
@@ -37,7 +37,7 @@ void main() {
         final container = createProviderContainer();
         final listener = Listener<EditTodoState>();
         container.listen(
-          editTodoNotifierProvider(null),
+          editTodoNotifierProvider(),
           listener,
           fireImmediately: true,
         );
@@ -52,11 +52,11 @@ void main() {
       final container = createProviderContainer();
       final listener = Listener<EditTodoState>();
       container.listen(
-        editTodoNotifierProvider(null),
+        editTodoNotifierProvider(),
         listener,
         fireImmediately: true,
       );
-      container.read(editTodoNotifierProvider(null).notifier).changeTitle('new_title');
+      container.read(editTodoNotifierProvider().notifier).changeTitle('new_title');
       verify(
         () => listener(
           EditTodoState(),
@@ -70,11 +70,13 @@ void main() {
       final container = createProviderContainer();
       final listener = Listener<EditTodoState>();
       container.listen(
-        editTodoNotifierProvider(null),
+        editTodoNotifierProvider(),
         listener,
         fireImmediately: true,
       );
-      container.read(editTodoNotifierProvider(null).notifier).changeDescription('new_description');
+      container
+          .read(editTodoNotifierProvider().notifier)
+          .changeDescription('new_description');
       verify(
         () => listener(
           EditTodoState(),
@@ -94,13 +96,13 @@ void main() {
           final container = createProviderContainer();
           final listener = Listener<EditTodoState>();
           container.listen(
-            editTodoNotifierProvider(null),
+            editTodoNotifierProvider(),
             listener,
             fireImmediately: true,
           );
           when(() => container.read(todosRepositoryProvider).saveTodo(any()))
               .thenAnswer((_) async {});
-          final notifier = container.read(editTodoNotifierProvider(null).notifier);
+          final notifier = container.read(editTodoNotifierProvider().notifier);
           notifier
             ..changeTitle('new_title')
             ..changeDescription('new_description');
@@ -147,12 +149,13 @@ void main() {
           verify(
             () => container.read(todosRepositoryProvider).saveTodo(
                   any(
-                    that:
-                        isA<Todo>().having((t) => t.title, 'new_title', equals('new_title')).having(
-                              (t) => t.description,
-                              'new_description',
-                              equals('new_description'),
-                            ),
+                    that: isA<Todo>()
+                        .having((t) => t.title, 'new_title', equals('new_title'))
+                        .having(
+                          (t) => t.description,
+                          'new_description',
+                          equals('new_description'),
+                        ),
                   ),
                 ),
           ).called(1);
@@ -172,13 +175,14 @@ void main() {
           final container = createProviderContainer();
           final listener = Listener<EditTodoState>();
           container.listen(
-            editTodoNotifierProvider(initialTodo),
+            editTodoNotifierProvider(initialTodo: initialTodo),
             listener,
             fireImmediately: true,
           );
           when(() => container.read(todosRepositoryProvider).saveTodo(any()))
               .thenAnswer((_) async {});
-          final notifier = container.read(editTodoNotifierProvider(initialTodo).notifier);
+          final notifier =
+              container.read(editTodoNotifierProvider(initialTodo: initialTodo).notifier);
           notifier
             ..changeTitle('new_title')
             ..changeDescription('new_description');
@@ -272,13 +276,13 @@ void main() {
           final container = createProviderContainer();
           final listener = Listener<EditTodoState>();
           container.listen(
-            editTodoNotifierProvider(null),
+            editTodoNotifierProvider(),
             listener,
             fireImmediately: true,
           );
           when(() => container.read(todosRepositoryProvider).saveTodo(any()))
               .thenThrow(Exception('oops'));
-          final notifier = container.read(editTodoNotifierProvider(null).notifier);
+          final notifier = container.read(editTodoNotifierProvider().notifier);
           notifier
             ..changeTitle('new_title')
             ..changeDescription('new_description');
