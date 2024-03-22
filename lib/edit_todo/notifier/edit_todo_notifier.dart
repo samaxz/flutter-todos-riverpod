@@ -12,88 +12,17 @@ part 'edit_todo_state.dart';
 class MockEditTodoNotifier extends _$EditTodoNotifier
     with Mock
     implements EditTodoNotifier {
-  // this throws and 0 tests can be passed
-  // @override
-  // EditTodoState build({Todo? initialTodo}) {
-  //   return EditTodoState(
-  //     initialTodo: initialTodo,
-  //     title: initialTodo?.title ?? '',
-  //     description: initialTodo?.description ?? '',
-  //   );
-  // }
-
-  // this throws ```type 'Null' is not a subtype of type 'EditTodoState'```
-  // @override
-  // EditTodoState build({Todo? initialTodo}) {
-  //   return EditTodoState(
-  //     initialTodo: initialTodo,
-  //     title: initialTodo!.title,
-  //     description: initialTodo.description,
-  //   );
-  // }
-
   // this works
   // without this, i'm getting ```type 'Null' is not a subtype of type 'EditTodoState'```
-  // @override
+  @override
   EditTodoState build({Todo? initialTodo}) {
-    // EditTodoState build({required Todo initialTodo}) {
     return EditTodoState(
       initialTodo: initialTodo,
       title: initialTodo?.title ?? '',
       description: initialTodo?.description ?? '',
     );
-    // return EditTodoState();
   }
-
-  // this doesn't work
-  // EditTodoState setTodo(Todo todo) {
-  //   return EditTodoState(
-  //     initialTodo: todo,
-  //     title: todo.title,
-  //     description: todo.description,
-  //   );
-  //   // return state.copyWith(
-  //   //   initialTodo: todo,
-  //   //   title: todo.title,
-  //   //   description: todo.description,
-  //   // );
-  // }
-
-  // @override
-  // void changeTitle(String? newTitle) {}
-  //
-  // @override
-  // void changeDescription(String? newDescription) {}
-  // @override
-
-  // @override
-  // EditTodoState build({Todo? initialTodo}) {
-  //   return EditTodoState(initialTodo: initialTodo);
-  // }
-
-  // @override
-  // EditTodoState build(Todo todo) {
-  //   return EditTodoState(
-  //     initialTodo: todo,
-  //     title: todo.title,
-  //     description: todo.description,
-  //   );
-  // }
 }
-
-// TODO remove this
-// class MockEditTodoNotifierBuild extends _$EditTodoNotifier
-//     with Mock
-//     implements EditTodoNotifier {
-//   @override
-//   EditTodoState build({Todo? initialTodo}) {
-//     return EditTodoState(
-//       initialTodo: initialTodo,
-//       title: initialTodo?.title ?? '',
-//       description: initialTodo?.description ?? '',
-//     );
-//   }
-// }
 
 // overriding dependencies for testing purposes and to explicitly list all the dependencies
 @Riverpod(dependencies: [todosRepository])
@@ -142,6 +71,5 @@ class EditTodoNotifier extends _$EditTodoNotifier {
       description: todo.description,
     );
     return state;
-    // throw UnimplementedError();
   }
 }
