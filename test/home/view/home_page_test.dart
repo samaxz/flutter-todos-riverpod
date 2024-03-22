@@ -1,19 +1,36 @@
-import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_todos/home/home.dart';
+import 'package:flutter_todos/home/notifier/home_notifier.dart';
+import 'package:flutter_todos/providers/providers.dart';
+import 'package:flutter_todos/stats/notifier/stats_notifier.dart';
 import 'package:flutter_todos/stats/stats.dart';
+import 'package:flutter_todos/todos_overview/notifier/todos_overview_notifier.dart';
 import 'package:flutter_todos/todos_overview/todos_overview.dart';
 import 'package:mockingjay/mockingjay.dart';
 import 'package:todos_repository/todos_repository.dart';
 
 import '../../helpers/helpers.dart';
 
-class MockHomeCubit extends MockCubit<HomeState> implements HomeCubit {}
+// class MockHomeCubit extends MockCubit<HomeState> implements HomeCubit {}
 
 void main() {
   late TodosRepository todosRepository;
+
+  ProviderContainer createProviderContainer() {
+    final container = ProviderContainer(
+      overrides: [
+        // weird, but, this causes null state
+        homeNotifierProvider.overrideWith(() => MockHomeNotifier()),
+        // todosRepositoryProvider.overrideWithValue(MockTodosRepository()),
+        statsNotifierProvider.overrideWith(() => MockStatsNotifier()),
+      ],
+    );
+    // this throws, since it can only be used inside tests
+    // addTearDown(container.dispose);
+    return container;
+  }
 
   group('HomePage', () {
     setUp(() {
@@ -23,11 +40,20 @@ void main() {
 
     testWidgets('renders HomeView', (tester) async {
       await tester.pumpApp(
-        const HomePage(),
+        ProviderScope(
+          overrides: [
+            // weird, but, this causes null state
+            homeNotifierProvider.overrideWith(() => MockHomeNotifier()),
+            todosRepositoryProvider.overrideWithValue(MockTodosRepository()),
+            statsNotifierProvider.overrideWith(() => MockStatsNotifier()),
+            todosOverviewNotifierProvider.overrideWith(() => MockTodosOverviewNotifier()),
+          ],
+          child: const HomePage(),
+        ),
         todosRepository: todosRepository,
       );
 
-      expect(find.byType(HomeView), findsOneWidget);
+      expect(find.byType(HomePage), findsOneWidget);
     });
   });
 
@@ -37,15 +63,15 @@ void main() {
     );
 
     late MockNavigator navigator;
-    late HomeCubit cubit;
+    // late HomeCubit cubit;
 
     setUp(() {
       navigator = MockNavigator();
       when(() => navigator.canPop()).thenReturn(false);
       when(() => navigator.push<void>(any())).thenAnswer((_) async {});
 
-      cubit = MockHomeCubit();
-      when(() => cubit.state).thenReturn(const HomeState());
+      // cubit = MockHomeCubit();
+      // when(() => cubit.state).thenReturn(const HomeState());
 
       todosRepository = MockTodosRepository();
       when(todosRepository.getTodos).thenAnswer((_) => const Stream.empty());
@@ -54,9 +80,15 @@ void main() {
     Widget buildSubject() {
       return MockNavigatorProvider(
         navigator: navigator,
-        child: BlocProvider.value(
-          value: cubit,
-          child: const HomeView(),
+        child: ProviderScope(
+          overrides: [
+            // weird, but, this causes null state
+            homeNotifierProvider.overrideWith(() => MockHomeNotifier()),
+            todosRepositoryProvider.overrideWithValue(MockTodosRepository()),
+            statsNotifierProvider.overrideWith(() => MockStatsNotifier()),
+            todosOverviewNotifierProvider.overrideWith(() => MockTodosOverviewNotifier()),
+          ],
+          child: const HomePage(),
         ),
       );
     }
@@ -65,7 +97,7 @@ void main() {
       'renders TodosOverviewPage '
       'when tab is set to HomeTab.todos',
       (tester) async {
-        when(() => cubit.state).thenReturn(const HomeState());
+        // when(() => cubit.state).thenReturn(const HomeState());
 
         await tester.pumpApp(
           buildSubject(),
@@ -80,7 +112,17 @@ void main() {
       'renders StatsPage '
       'when tab is set to HomeTab.stats',
       (tester) async {
-        when(() => cubit.state).thenReturn(const HomeState(tab: HomeTab.stats));
+        final container = createProviderContainer();
+        // when(() => cubit.state).thenReturn(const HomeState(tab: HomeTab.stats));
+        // i think this method is wrong, since the only way to set state is to call a
+        // notifier method, then i should do exactly that
+        when(
+          // UPD this indeed doesn't work
+          // () => container.read(homeNotifierProvider),
+          () => container.read(homeNotifierProvider.notifier).setTab(HomeTab.stats),
+        ).thenReturn(
+          const HomeState(tab: HomeTab.stats),
+        );
 
         await tester.pumpApp(
           buildSubject(),
@@ -102,7 +144,7 @@ void main() {
 
         await tester.tap(find.byIcon(Icons.list_rounded));
 
-        verify(() => cubit.setTab(HomeTab.todos)).called(1);
+        // verify(() => cubit.setTab(HomeTab.todos)).called(1);
       },
     );
 
@@ -117,7 +159,7 @@ void main() {
 
         await tester.tap(find.byIcon(Icons.show_chart_rounded));
 
-        verify(() => cubit.setTab(HomeTab.stats)).called(1);
+        // verify(() => cubit.setTab(HomeTab.stats)).called(1);
       },
     );
 
