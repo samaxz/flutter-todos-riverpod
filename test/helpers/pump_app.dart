@@ -9,20 +9,9 @@ extension PumpApp on WidgetTester {
   Future<void> pumpApp(
     Widget widget, {
     TodosRepository? todosRepository,
-    Todo? initialTodo,
-    // TODO pass overrides here
-    // List<Override> overrides = const [],
   }) {
     return pumpWidget(
       ProviderScope(
-        // overrides: [
-        //   todosRepositoryProvider.overrideWithValue(MockTodosRepository()),
-        //   // editTodoNotifierProvider(initialTodo: initialTodo)
-        //   // editTodoNotifierProvider().overrideWith(() => mockEditTodoNotifier),
-        //   editTodoNotifierProvider(initialTodo: initialTodo)
-        //       .overrideWith(() => MockEditTodoNotifier.new()),
-        // ],
-        // overrides: overrides,
         child: MaterialApp(
           localizationsDelegates: const [
             AppLocalizations.delegate,
@@ -38,14 +27,10 @@ extension PumpApp on WidgetTester {
   Future<void> pumpRoute(
     Route<dynamic> route, {
     TodosRepository? todosRepository,
-    Todo? initialTodo,
-    List<Override> overrides = const [],
   }) {
     return pumpApp(
       Navigator(onGenerateRoute: (_) => route),
       todosRepository: todosRepository,
-      initialTodo: initialTodo,
-      // overrides: overrides,
     );
   }
 }
