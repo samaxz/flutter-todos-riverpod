@@ -9,15 +9,9 @@ TodosRepository todosRepository(TodosRepositoryRef ref) {
   throw UnimplementedError();
 }
 
-// this doesn't work with widget testing, but does with unit testing
-class MockTodosRepository extends Mock implements TodosRepository {
-  // this throws
-  // Stream<List<Todo>> getTodos() => Stream.empty();
-
-  // this throws ```Used on a non-mocktail object```
-  // @override
-  // Future<void> saveTodo(Todo todo) => Future.value(todo);
-}
+// this doesn't work with widget testing, but does work with unit testing
+// any overridden method here throws ```Used on a non-mocktail object``` inside unit tests
+class MockTodosRepository extends Mock implements TodosRepository {}
 
 // this works with widget testing
 class FakeTodosRepository implements TodosRepository {
@@ -36,7 +30,3 @@ class FakeTodosRepository implements TodosRepository {
   @override
   Future<void> saveTodo(Todo todo) => Future.value(todo);
 }
-
-// this doesn't work with widget testing
-// TODO remove this
-// class MockFakeTodosRepository extends Mock implements FakeTodosRepository {}
