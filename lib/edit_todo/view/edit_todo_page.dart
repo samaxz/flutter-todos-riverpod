@@ -38,6 +38,7 @@ class EditTodoPage extends ConsumerWidget {
     final isNewTodo = todoState.isNewTodo;
 
     return Scaffold(
+      // key: Key('appbar'),
       appBar: AppBar(
         title: Text(
           isNewTodo ? l10n.editTodoAddAppBarTitle : l10n.editTodoEditAppBarTitle,
@@ -51,9 +52,7 @@ class EditTodoPage extends ConsumerWidget {
         onPressed: status.isLoadingOrSuccess
             ? null
             : () {
-                ref
-                    .read(editTodoNotifierProvider(initialTodo: initialTodo).notifier)
-                    .submitTodo();
+                ref.read(editTodoNotifierProvider(initialTodo: initialTodo).notifier).submitTodo();
               },
         child: status.isLoadingOrSuccess
             ? const CupertinoActivityIndicator()
@@ -101,9 +100,7 @@ class _TitleField extends ConsumerWidget {
         FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9\s]')),
       ],
       onChanged: (value) {
-        ref
-            .read(editTodoNotifierProvider(initialTodo: initialTodo).notifier)
-            .changeTitle(value);
+        ref.read(editTodoNotifierProvider(initialTodo: initialTodo).notifier).changeTitle(value);
       },
     );
   }
