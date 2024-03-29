@@ -7,24 +7,16 @@ import 'package:flutter_todos/providers/providers.dart';
 import 'package:flutter_todos/theme/theme.dart';
 import 'package:mocktail/mocktail.dart';
 
-import 'helpers/helpers.dart';
-
 void main() {
-  ProviderContainer createProviderContainer() {
-    final container = ProviderContainer(
-      overrides: [
-        todosRepositoryProvider.overrideWithValue(MockTodosRepository()),
-      ],
-    );
-    // this throws, since it can only be used inside tests
-    // addTearDown(container.dispose);
-    return container;
-  }
+  late MockTodosRepository mockTodosRepository;
 
   setUp(() {
+    mockTodosRepository = MockTodosRepository();
     when(
-      () => createProviderContainer().read(todosRepositoryProvider).getTodos(),
-    ).thenAnswer((_) => const Stream.empty());
+      () => mockTodosRepository.getTodos(),
+    ).thenAnswer(
+      (_) => const Stream.empty(),
+    );
   });
 
   group('App', () {
@@ -32,7 +24,7 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            todosRepositoryProvider.overrideWithValue(FakeTodosRepository()),
+            todosRepositoryProvider.overrideWith((ref) => mockTodosRepository),
           ],
           child: App(),
         ),
@@ -47,7 +39,7 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            todosRepositoryProvider.overrideWithValue(FakeTodosRepository()),
+            todosRepositoryProvider.overrideWith((ref) => mockTodosRepository),
           ],
           child: App(),
         ),
@@ -64,7 +56,7 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            todosRepositoryProvider.overrideWithValue(FakeTodosRepository()),
+            todosRepositoryProvider.overrideWith((ref) => mockTodosRepository),
           ],
           child: App(),
         ),
