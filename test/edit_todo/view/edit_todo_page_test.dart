@@ -33,58 +33,22 @@ void main() {
   }
 
   late MockNavigator navigator;
-  // late MockTodosRepository mockTodosRepository;
-  // late MockEditTodoNotifier mockEditTodoNotifier;
-  // late ProviderContainer providerContainer;
+  late MockTodosRepository mockTodosRepository;
+  late MockEditTodoNotifier mockEditTodoNotifier;
 
   setUp(() {
     navigator = MockNavigator();
     when(() => navigator.canPop()).thenReturn(false);
     when(() => navigator.push<void>(any())).thenAnswer((_) async {});
-    // TODO use provider container here (or don't)
+
+    mockTodosRepository = MockTodosRepository();
+    mockEditTodoNotifier = MockEditTodoNotifier.new();
 
     // TODO move this down below where it's used
     registerFallbackValue(Todo(title: ''));
-    // TODO remove these
-    // registerFallbackValue(Todo(title: 'title'));
-    // registerFallbackValue('title');
-
-    // final mockTodo = Todo(
-    //   id: '1',
-    //   title: 'title 1',
-    //   description: 'description 1',
-    // );
-    // final mockState = EditTodoState(
-    //   initialTodo: mockTodo,
-    //   title: mockTodo.title,
-    //   description: mockTodo.description,
-    // );
-    // // creating and initializing all of it here is kind of pointless
-    // mockTodosRepository = MockTodosRepository();
-    // mockEditTodoNotifier = MockEditTodoNotifier.new();
-    // providerContainer = createProviderContainer(
-    //   mockTodosRepository: mockTodosRepository,
-    //   initialTodo: mockTodo,
-    //   mockEditTodoNotifier: mockEditTodoNotifier,
-    // );
-    // when(
-    //   () => providerContainer.read(
-    //     editTodoNotifierProvider(initialTodo: mockTodo),
-    //   ),
-    // ).thenReturn(mockState);
-    // final mockEditTodoNotifier = MockEditTodoNotifier.new();
-    // final container = createProviderContainer(
-    //   mockTodosRepository: mockTodosRepos,
-    //   initialTodo: mockTodo,
-    //   mockEditTodoNotifier: mockEditTodoNotifier,
-    // );
-    // when(
-    //   () => container.read(
-    //     editTodoNotifierProvider(initialTodo: mockTodo),
-    //   ),
-    // ).thenReturn(mockState);
   });
 
+  // TODO probably add initial todo here in the future
   group('EditTodoPage', () {
     Widget buildSubject() {
       return MockNavigatorProvider(
@@ -120,42 +84,17 @@ void main() {
       expect(find.byType(EditTodoPage), findsOneWidget);
     });
 
+    // TODO probably change this in the future
     testWidgets(
       'pops when a todo was saved successfully',
       (tester) async {
-        // whenListen<EditTodoState>(
-        //   editTodoBloc,
-        //   Stream.fromIterable(const [
-        //     EditTodoState(),
-        //     EditTodoState(status: EditTodoStatus.success),
-        //   ]),
-        // );
-        final mockEditTodoNotifier = MockEditTodoNotifier.new();
-        final mockTodosRepos = MockTodosRepository();
-        final container = createProviderContainer(mockTodosRepository: mockTodosRepos);
-        final listener = Listener();
-        container.listen(
-          editTodoNotifierProvider(),
-          listener,
-          fireImmediately: true,
-        );
-        // listener(
-        //   null,
-        //   EditTodoState(),
-        // );
-        when(mockEditTodoNotifier.submitTodo).thenAnswer((_) async {
-          // listener(
-          //   EditTodoState(),
-          //   EditTodoState(status: EditTodoStatus.success),
-          // );
-        });
-        listener(
-          const EditTodoState(),
-          const EditTodoState(status: EditTodoStatus.success),
-        );
         await tester.pumpApp(buildSubject());
 
+        // in order for this to work, mock methods should be overridden
         await mockEditTodoNotifier.submitTodo();
+        // since it's a real method, the notifier shouldn't be overridden
+        // this throws ```Pending timers:``` exception
+        // await container.read(editTodoNotifierProvider().notifier).submitTodo();
 
         navigator.pop();
 
@@ -169,10 +108,10 @@ void main() {
     const titleTextFormField = Key('editTodoView_title_textFormField');
     const descriptionTextFormField = Key('editTodoView_description_textFormField');
 
-    Widget buildSubject() {
+    Widget buildSubject({Todo? initialTodo}) {
       return MockNavigatorProvider(
         navigator: navigator,
-        child: const EditTodoPage(),
+        child: EditTodoPage(initialTodo: initialTodo),
       );
     }
 
@@ -180,25 +119,10 @@ void main() {
       'renders AppBar with title text for new todos '
       'when a new todo is being created',
       (tester) async {
-        final mockTodosRepos = MockTodosRepository();
-        final mockEditTodoNotifier = MockEditTodoNotifier.new();
-        final container = createProviderContainer(
-          mockTodosRepository: mockTodosRepos,
-          mockEditTodoNotifier: mockEditTodoNotifier,
-        );
-        when(
-          () => container.read(editTodoNotifierProvider()),
-        ).thenReturn(const EditTodoState());
-
         await tester.pumpApp(buildSubject());
 
-        // await tester.pumpWidget(Container());
-
-        // expect(find.byType(Container, skipOffstage: false), findsOneWidget);
-        // expect(find.byType(Scaffold, skipOffstage: false), findsOneWidget);
         expect(
           find.byType(AppBar, skipOffstage: false),
-          // find.byKey(Key('appbar'), skipOffstage: false),
           findsOneWidget,
         );
         expect(
@@ -208,8 +132,6 @@ void main() {
           ),
           findsOneWidget,
         );
-
-        await tester.pumpWidget(Container());
       },
     );
 
@@ -218,40 +140,18 @@ void main() {
       'when an existing todo is being edited',
       (tester) async {
         final initialTodo = Todo(title: 'title');
-        final mockTodosRepos = MockTodosRepository();
-        final mockEditTodoNotifier = MockEditTodoNotifier.new();
-        final container = createProviderContainer(
-          mockTodosRepository: mockTodosRepos,
+
+        await tester.pumpApp(
+          buildSubject(initialTodo: initialTodo),
           initialTodo: initialTodo,
+          mockTodosRepository: mockTodosRepository,
           mockEditTodoNotifier: mockEditTodoNotifier,
         );
-        when(
-          () => container.read(
-            editTodoNotifierProvider(initialTodo: initialTodo),
-          ),
-        ).thenReturn(
-          EditTodoState(initialTodo: initialTodo),
-        );
-        // final listener = Listener();
-        // container.listen(
-        //   editTodoNotifierProvider(initialTodo: initialTodo),
-        //   listener,
-        //   fireImmediately: true,
-        // );
-        // verify(
-        //   () => listener(
-        //     null,
-        //     EditTodoState(initialTodo: initialTodo),
-        //   ),
-        // );
-
-        await tester.pumpApp(buildSubject());
 
         expect(find.byType(AppBar), findsOneWidget);
         expect(
           find.descendant(
             of: find.byType(AppBar, skipOffstage: false),
-            // of: find.widgetWithText(AppBar, 'Edit Todo'),
             matching: find.text(l10n.editTodoEditAppBarTitle),
             skipOffstage: false,
           ),
@@ -268,21 +168,13 @@ void main() {
       });
 
       testWidgets('is disabled when loading', (tester) async {
-        final mockTodosRepos = MockTodosRepository();
-        final mockEditTodoNotifier = MockEditTodoNotifier.new();
-        final container = createProviderContainer(
-          mockTodosRepository: mockTodosRepos,
+        await tester.pumpApp(
+          buildSubject(),
           mockEditTodoNotifier: mockEditTodoNotifier,
         );
-        when(
-          () => container.read(editTodoNotifierProvider()),
-        ).thenReturn(
-          const EditTodoState(status: EditTodoStatus.loading),
-        );
-        await tester.pumpApp(buildSubject());
 
         final textField = tester.widget<TextFormField>(find.byKey(descriptionTextFormField));
-        // textField.
+        expect(textField.enabled, false);
       });
 
       testWidgets(
@@ -290,9 +182,6 @@ void main() {
         'to EditTodoNotifier '
         'when a new value is entered',
         (tester) async {
-          final mockEditTodoNotifier = MockEditTodoNotifier.new();
-          // final mockTodosRepos = MockTodosRepository();
-          // final container = createProviderContainer(mockTodosRepository: mockTodosRepos);
           await tester.pumpApp(buildSubject());
           await tester.enterText(
             find.byKey(titleTextFormField),
@@ -316,22 +205,14 @@ void main() {
       });
 
       testWidgets('is disabled when loading', (tester) async {
-        final mockTodosRepos = MockTodosRepository();
-        final mockEditTodoNotifier = MockEditTodoNotifier.new();
-        final container = createProviderContainer(
-          mockTodosRepository: mockTodosRepos,
+        await tester.pumpApp(
+          buildSubject(),
+          mockTodosRepository: mockTodosRepository,
           mockEditTodoNotifier: mockEditTodoNotifier,
         );
-        // when(() => editTodoBloc.state).thenReturn(
-        // strange - this doesn't throw any exception
-        when(
-          () => container.read(editTodoNotifierProvider()),
-        ).thenReturn(
-          const EditTodoState(status: EditTodoStatus.loading),
-        );
-        await tester.pumpApp(buildSubject());
 
         final textField = tester.widget<TextFormField>(find.byKey(titleTextFormField));
+        // it's enabled, once the edit todo notifier's status is not loading
         expect(textField.enabled, false);
       });
 
@@ -340,22 +221,16 @@ void main() {
         'to EditTodoNotifier '
         'when a new value is entered',
         (tester) async {
-          // final mockTodosRepos = MockTodosRepository();
-          final mockEditTodoNotifier = MockEditTodoNotifier.new();
-          // final container = createProviderContainer(
-          //   mockTodosRepository: mockTodosRepos,
-          //   mockEditTodoNotifier: mockEditTodoNotifier,
-          // );
           await tester.pumpApp(buildSubject());
           await tester.enterText(
             find.byKey(descriptionTextFormField),
-            'newdescription',
+            'newDescription',
           );
 
-          mockEditTodoNotifier.changeDescription('newdescription');
+          mockEditTodoNotifier.changeDescription('newDescription');
 
           verify(
-            () => mockEditTodoNotifier.changeDescription('newdescription'),
+            () => mockEditTodoNotifier.changeDescription('newDescription'),
           ).called(1);
         },
       );
@@ -379,32 +254,24 @@ void main() {
         'to EditTodoNotifier '
         'when tapped',
         (tester) async {
-          final mockTodosRepos = MockTodosRepository();
-          when(() => mockTodosRepos.saveTodo(any())).thenAnswer((_) => Future.value());
-          // final mockEditTodoNotifier = MockEditTodoNotifier.new();
-          final container = createProviderContainer(
-            mockTodosRepository: mockTodosRepos,
-            // mockEditTodoNotifier: mockEditTodoNotifier,
-          );
+          when(() => mockTodosRepository.saveTodo(any())).thenAnswer((_) => Future.value());
+          final container = createProviderContainer(mockTodosRepository: mockTodosRepository);
           final listener = Listener();
           container.listen(
             editTodoNotifierProvider(),
             listener,
             fireImmediately: true,
           );
+
           verify(() => listener(null, const EditTodoState()));
-          // when(() => mockEditTodoNotifier.submitTodo()).thenAnswer((_) => Future.value());
 
           await tester.pumpApp(buildSubject());
           await tester.tap(find.byType(FloatingActionButton));
-          // final notifier = container.read(editTodoNotifierProvider().notifier);
           await container.read(editTodoNotifierProvider().notifier).submitTodo();
+          addTearDown(() => container.dispose());
 
-          // verify(() => editTodoBloc.add(const EditTodoSubmitted())).called(1);
           verify(
-            // () => mockTodosRepos.saveTodo(todo),
-            // this works
-            () => mockTodosRepos.saveTodo(any(that: isA<Todo>())),
+            () => mockTodosRepository.saveTodo(any(that: isA<Todo>())),
           ).called(1);
         },
       );
