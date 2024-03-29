@@ -50,7 +50,7 @@ void main() {
           ],
           child: const HomePage(),
         ),
-        todosRepository: todosRepository,
+        mockTodosRepository: todosRepository,
       );
 
       expect(find.byType(HomePage), findsOneWidget);
@@ -101,7 +101,7 @@ void main() {
 
         await tester.pumpApp(
           buildSubject(),
-          todosRepository: todosRepository,
+          mockTodosRepository: todosRepository,
         );
 
         expect(find.byType(TodosOverviewPage), findsOneWidget);
@@ -126,7 +126,7 @@ void main() {
 
         await tester.pumpApp(
           buildSubject(),
-          todosRepository: todosRepository,
+          mockTodosRepository: todosRepository,
         );
 
         expect(find.byType(StatsPage), findsOneWidget);
@@ -139,7 +139,7 @@ void main() {
       (tester) async {
         await tester.pumpApp(
           buildSubject(),
-          todosRepository: todosRepository,
+          mockTodosRepository: todosRepository,
         );
 
         await tester.tap(find.byIcon(Icons.list_rounded));
@@ -154,7 +154,7 @@ void main() {
       (tester) async {
         await tester.pumpApp(
           buildSubject(),
-          todosRepository: todosRepository,
+          mockTodosRepository: todosRepository,
         );
 
         await tester.tap(find.byIcon(Icons.show_chart_rounded));
@@ -169,7 +169,7 @@ void main() {
         (tester) async {
           await tester.pumpApp(
             buildSubject(),
-            todosRepository: todosRepository,
+            mockTodosRepository: todosRepository,
           );
 
           expect(
@@ -189,7 +189,7 @@ void main() {
       testWidgets('renders add icon', (tester) async {
         await tester.pumpApp(
           buildSubject(),
-          todosRepository: todosRepository,
+          mockTodosRepository: todosRepository,
         );
 
         expect(
@@ -206,7 +206,7 @@ void main() {
         (tester) async {
           await tester.pumpApp(
             buildSubject(),
-            todosRepository: todosRepository,
+            mockTodosRepository: todosRepository,
           );
 
           await tester.tap(find.byKey(addTodoFloatingActionButtonKey));

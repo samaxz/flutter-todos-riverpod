@@ -38,7 +38,6 @@ class EditTodoPage extends ConsumerWidget {
     final isNewTodo = todoState.isNewTodo;
 
     return Scaffold(
-      // key: Key('appbar'),
       appBar: AppBar(
         title: Text(
           isNewTodo ? l10n.editTodoAddAppBarTitle : l10n.editTodoEditAppBarTitle,

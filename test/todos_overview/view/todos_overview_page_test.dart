@@ -43,7 +43,7 @@ void main() {
     testWidgets('renders TodosOverviewView', (tester) async {
       await tester.pumpApp(
         const TodosOverviewPage(),
-        todosRepository: todosRepository,
+        mockTodosRepository: todosRepository,
       );
 
       expect(find.byType(TodosOverviewView), findsOneWidget);
@@ -54,7 +54,7 @@ void main() {
       (tester) async {
         await tester.pumpApp(
           const TodosOverviewPage(),
-          todosRepository: todosRepository,
+          mockTodosRepository: todosRepository,
         );
 
         verify(() => todosRepository.getTodos()).called(1);
@@ -98,7 +98,7 @@ void main() {
       (tester) async {
         await tester.pumpApp(
           buildSubject(),
-          todosRepository: todosRepository,
+          mockTodosRepository: todosRepository,
         );
 
         expect(find.byType(AppBar), findsOneWidget);
@@ -128,7 +128,7 @@ void main() {
 
         await tester.pumpApp(
           buildSubject(),
-          todosRepository: todosRepository,
+          mockTodosRepository: todosRepository,
         );
         await tester.pumpAndSettle();
 
@@ -164,7 +164,7 @@ void main() {
       testWidgets('is rendered when lastDeletedTodo changes', (tester) async {
         await tester.pumpApp(
           buildSubject(),
-          todosRepository: todosRepository,
+          mockTodosRepository: todosRepository,
         );
         await tester.pumpAndSettle();
 
@@ -189,7 +189,7 @@ void main() {
         (tester) async {
           await tester.pumpApp(
             buildSubject(),
-            todosRepository: todosRepository,
+            mockTodosRepository: todosRepository,
           );
           await tester.pumpAndSettle();
 
@@ -221,7 +221,7 @@ void main() {
         (tester) async {
           await tester.pumpApp(
             buildSubject(),
-            todosRepository: todosRepository,
+            mockTodosRepository: todosRepository,
           );
 
           expect(find.byType(ListView), findsNothing);
@@ -239,7 +239,7 @@ void main() {
 
           await tester.pumpApp(
             buildSubject(),
-            todosRepository: todosRepository,
+            mockTodosRepository: todosRepository,
           );
 
           expect(find.byType(CupertinoActivityIndicator), findsOneWidget);
@@ -258,7 +258,7 @@ void main() {
 
           await tester.pumpApp(
             buildSubject(),
-            todosRepository: todosRepository,
+            mockTodosRepository: todosRepository,
           );
 
           expect(find.text(l10n.todosOverviewEmptyText), findsOneWidget);
@@ -279,7 +279,7 @@ void main() {
       testWidgets('renders ListView with TodoListTiles', (tester) async {
         await tester.pumpApp(
           buildSubject(),
-          todosRepository: todosRepository,
+          mockTodosRepository: todosRepository,
         );
 
         expect(find.byType(ListView), findsOneWidget);
@@ -293,13 +293,12 @@ void main() {
         (tester) async {
           await tester.pumpApp(
             buildSubject(),
-            todosRepository: todosRepository,
+            mockTodosRepository: todosRepository,
           );
 
           final todo = mockTodos.first;
 
-          final todoListTile =
-              tester.widget<TodoListTile>(find.byType(TodoListTile).first);
+          final todoListTile = tester.widget<TodoListTile>(find.byType(TodoListTile).first);
           todoListTile.onToggleCompleted!(!todo.isCompleted);
 
           verify(
@@ -320,7 +319,7 @@ void main() {
         (tester) async {
           await tester.pumpApp(
             buildSubject(),
-            todosRepository: todosRepository,
+            mockTodosRepository: todosRepository,
           );
 
           final todo = mockTodos.first;
@@ -342,7 +341,7 @@ void main() {
         (tester) async {
           await tester.pumpApp(
             buildSubject(),
-            todosRepository: todosRepository,
+            mockTodosRepository: todosRepository,
           );
 
           final todoListTile = tester.widget<TodoListTile>(

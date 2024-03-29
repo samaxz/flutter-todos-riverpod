@@ -20,7 +20,7 @@ void main() {
     testWidgets('renders StatsView', (tester) async {
       await tester.pumpApp(
         const StatsPage(),
-        todosRepository: todosRepository,
+        mockTodosRepository: todosRepository,
       );
 
       expect(find.byType(StatsView), findsOneWidget);
@@ -31,7 +31,7 @@ void main() {
       (tester) async {
         await tester.pumpApp(
           const StatsPage(),
-          todosRepository: todosRepository,
+          mockTodosRepository: todosRepository,
         );
 
         verify(() => todosRepository.getTodos()).called(1);
