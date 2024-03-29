@@ -7,8 +7,22 @@ import 'package:todos_repository/todos_repository.dart';
 part 'edit_todo_notifier.g.dart';
 part 'edit_todo_state.dart';
 
-// for unit testing
-class MockEditTodoNotifier extends _$EditTodoNotifier with Mock implements EditTodoNotifier {}
+// for unit and widget testing
+class MockEditTodoNotifier extends _$EditTodoNotifier with Mock implements EditTodoNotifier {
+  // this works with both container and the mock notifier, but the the former throws
+  // ```Pending timers:``` (probably cause i don't listen to it at the beginning)
+  @override
+  Future<void> submitTodo() => Future.value();
+
+  @override
+  EditTodoState build({Todo? initialTodo}) {
+    return EditTodoState(
+      initialTodo: initialTodo,
+      // used for widget test
+      status: EditTodoStatus.success,
+    );
+  }
+}
 
 // overriding dependencies for testing purposes and to explicitly list all the dependencies
 @Riverpod(dependencies: [todosRepository])
